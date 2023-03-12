@@ -11,6 +11,7 @@ app.use(morgan('dev'))
 app.use(express.json())
 
 app.use(require('./routes/users.route'))
+app.use(require('./routes/messages.route'))
 
 const PORT = process.env.PORT || 5000
 
