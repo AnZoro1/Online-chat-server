@@ -1,7 +1,7 @@
 const Messages = require('../models/Message.model')
 
 module.exports.MessagesController = {
-  addMessage: async (req, res, next) => {
+  addMessage: async (req, res) => {
     try {
       const { from, to, message } = req.body
       const data = await Messages.create({
@@ -15,11 +15,11 @@ module.exports.MessagesController = {
       } else {
         return res.json({ msg: 'Failed to add message to the database' })
       }
-    } catch (error) {
-      next(error)
+    } catch (err) {
+      return res.json({ error: err })
     }
   },
-  getAllMessages: async (req, res, next) => {
+  getAllMessages: async (req, res) => {
     try {
       const { from, to } = req.body
       const messages = await Messages.find({
@@ -35,8 +35,8 @@ module.exports.MessagesController = {
         }
       })
       res.json(projectMessages)
-    } catch (error) {
-      next(error)
+    } catch (err) {
+      return res.json({ error: err })
     }
   },
 }
