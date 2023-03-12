@@ -34,27 +34,68 @@ module.exports.UserController = {
     }
   },
   login: async (req, res) => {
-    const { username, password } = req.body
+    try {
+      const { username, password } = req.body
 
-    const user = await User.findOne({ username })
+      const user = await User.findOne({ username })
 
-    if (!user) {
-      return res.json({
-        message: 'Неправильный логин или пароль',
-        status: false,
-      })
+      if (!user) {
+        return res.json({
+          message: 'Неправильный логин или пароль',
+          status: false,
+        })
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password)
+
+      if (!isPasswordValid) {
+        return res.json({
+          message: 'Неправильный логин или пароль',
+          status: false,
+        })
+      }
+
+      delete user.password
+      return res.json({ status: true, user })
+    } catch (err) {
+      return res.json({ error: err })
     }
+  },
 
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+  setAvatar: async (req, res) => {
+    try {
+      const userId = req.params.id
+      const avatarImage = req.body.image
+      const userData = await User.findByIdAndUpdate(
+        userId,
+        {
+          isAvatarImageSet: true,
+          avatarImage,
+        },
 
-    if (!isPasswordValid) {
+        { new: true }
+      )
+
       return res.json({
-        message: 'Неправильный логин или пароль',
-        status: false,
+        isSet: userData.isAvatarImageSet,
+        image: userData.avatarImage,
       })
+    } catch (err) {
+      return res.json({ error: err })
     }
+  },
 
-    delete user.password
-    return res.json({ status: true, user })
+  allUsers: async (req, res) => {
+    try {
+      const users = await User.find({ _id: { $ne: req.params.id } }).select([
+        'email',
+        'username',
+        'avatarImage',
+        '_id',
+      ])
+      return res.json(users)
+    } catch (err) {
+      return res.json({ error: err })
+    }
   },
 }
