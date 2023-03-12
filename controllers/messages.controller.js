@@ -24,7 +24,7 @@ module.exports.MessagesController = {
       const { from, to } = req.body
       const messages = await Messages.find({
         users: {
-          $all: [from, to],
+          $all: [from, to], // The $all Оператор выбирает документы, в которых значением поля является массив, содержащий все указанные элементы. Чтобы указать $all выражение, используйте следующий прототип: { <field>: { $all: [ <value1> , <value2> ... ] } }
         },
       }).sort({ updateAt: 1 })
 

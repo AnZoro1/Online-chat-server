@@ -73,7 +73,7 @@ module.exports.UserController = {
           avatarImage,
         },
 
-        { new: true }
+        { new: true } // возвращает при update измененный документ сразу, если его не использовать возвращается старая версия документа.
       )
 
       return res.json({
@@ -88,6 +88,9 @@ module.exports.UserController = {
   allUsers: async (req, res) => {
     try {
       const users = await User.find({ _id: { $ne: req.params.id } }).select([
+        // $ne  - означает не равно, Пример Обратная операция - найдем пользователей, возраст которых НЕ равен 22: db.users.find ({age: {$ne : 22}})
+        // select()— это метод Mongoose, который используется для выбора полей документа, которые должны быть возвращены в результате запроса. Он используется для включения или исключения полей документа, возвращаемых запросом Mongoose. Метод select()выполняет то, что называется проекцией запроса. В нашем случае возвращаются следующие поля документов, оставляя поля password и isAvatarImageSet
+        
         'email',
         'username',
         'avatarImage',

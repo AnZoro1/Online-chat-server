@@ -10,6 +10,8 @@ app.use(cors())
 app.use(morgan('dev'))
 app.use(express.json())
 
+app.use(require('./routes/users.route'))
+
 const PORT = process.env.PORT || 5000
 
 mongoose
